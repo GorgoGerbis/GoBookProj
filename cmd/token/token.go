@@ -4,6 +4,7 @@
 // - Lexer reads in source code as a string, analyzes it character by character, and output the next
 //   token it recognizes. 
 // - ONLY need ONE method NextToken() which just outputs the next token
+// WE SHOULD ADD FILE NAMES AND LINE NUMBERS TO TOKENS BUT HERE IT DOESNT MAKE SENSE TO DO SO.
 
 
 // token/token.go
