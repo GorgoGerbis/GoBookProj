@@ -6,8 +6,7 @@
 // - ONLY need ONE method NextToken() which just outputs the next token
 // WE SHOULD ADD FILE NAMES AND LINE NUMBERS TO TOKENS BUT HERE IT DOESNT MAKE SENSE TO DO SO.
 
-
-// token/token.go
+// token/token.go // Go back to page 17 and add file names and line numbers
 package token
 
 type TokenType string
