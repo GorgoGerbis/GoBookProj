@@ -10,8 +10,13 @@
 package token
 
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 // LookupIdent checks the keywords table to see whether the given identifier is in fact a keyword.
@@ -41,12 +46,12 @@ const (
 	INT   = "INT"   // 13456
 
 	// Operators
-	ASSIGN	 = "="
-	PLUS	 = "+"
-	MINUS	 = "-"
-	BANG	 = "!"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
 	ASTERISK = "*"
-	SLASH 	 = "/"
+	SLASH    = "/"
 
 	LT = "<"
 	GT = ">"
