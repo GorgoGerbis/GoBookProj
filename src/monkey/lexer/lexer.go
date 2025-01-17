@@ -28,25 +28,16 @@ func New(source_code_input string) *Lexer {
 	return l
 }
 
-// The purpose of readChar is to give us the next character and advance our position in the input string
-// First checks if we have reached the end of input
-// 		If so: sets .ch to - which is the ASCII code for the "NUL" character means:
-//				1. we either havent read anything yet OR 2. End of the file for us
-// 		else: sets l.ch to the next character by accessing l.input[l.readPosition]
-func (l *Lexer) readChar() {
-	// Check if at the end of the input
-	if l.readPosition >= len(l.input) {
-		l.ch = 0 // sets ch = 0 which is ASCII for 'Nul'
-	} else {
-		// Sets l.ch value == to the NEXT character in the input string
-		l.ch = l.input[l.readPosition]
-	}
-	l.position = l.readPosition
-	l.readPosition += 1
-}
-
 // We look at the current character under examination (l.ch) and return a token depending on which character it is.
 // Before returning the token we advance our pointers into the input so when we call NextToken() again the l.ch field is already updated.
+//
+// LINE 61 -> "case '=':
+//					tok = newToken(token.ASSIGN, l.ch)"
+// This line ensures that the = character is correctly identified as an assignment operator and encapsulated as a token that the parser can understand.
+// By encapsulating the type (ASSIGN) and literal value (=) in a token, the lexer translates raw input characters into structured information for the next stages of the interpreter/compiler.
+// 		tokenType: Specifies the type of the token. Here, it is token.ASSIGN, which identifies the = token.
+// 		ch: The character being processed, which is stored in l.ch (the current character the lexer is analyzing).
+// The newly created token object is stored in tok, which is then returned by the NextToken function after advancing the lexer to the next character.
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
@@ -54,17 +45,43 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tok = newToken(token.ASSIGN, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.EQ, Literal: literal}
+		} else {
+			tok = newToken(token.ASSIGN, l.ch)
+		}
+	case '+':
+		tok = newToken(token.PLUS, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
+	case '!':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.NOT_EQ, Literal: literal}
+		} else {
+			tok = newToken(token.BANG, l.ch)
+		}
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
+	case '<':
+		tok = newToken(token.LT, l.ch)
+	case '>':
+		tok = newToken(token.GT, l.ch)
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
+	case ',':
+		tok = newToken(token.COMMA, l.ch)
 	case '(':
 		tok = newToken(token.LPAREN, l.ch)
 	case ')':
 		tok = newToken(token.RPAREN, l.ch)
-	case ',':
-		tok = newToken(token.COMMA, l.ch)
-	case '+':
-		tok = newToken(token.PLUS, l.ch)
 	case '{':
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
@@ -91,25 +108,6 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-// Helper function that helps us with initializing these tokens.
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{Type: tokenType, Literal: string(ch)}
-}
-
-func (l *Lexer) readIdentifier() string {
-	position := l.position
-	for isLetter(l.ch) {
-		l.readChar()
-	}
-	return l.input[position:l.position]
-}
-
-// Helper function just checks whether the given argument is a letter.
-// Treat '_' as a letter allowing it in identifiers and keywords.
-func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
-}
-
 // Found in many parsers sometimes it’s called eatWhitespace and sometimes consumeWhitespace.
 // Which characters these functions actually skip depends on the language being lexed.
 // Some language implementations do create tokens for newline characters for example and throw parsing errors if they are not at the correct place in the stream of tokens.
@@ -118,6 +116,41 @@ func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
+}
+
+// The purpose of readChar is to give us the next character and advance our position in the input string
+// First checks if we have reached the end of input
+// 		If so: sets .ch to - which is the ASCII code for the "NUL" character means:
+//				1. we either havent read anything yet OR 2. End of the file for us
+// 		else: sets l.ch to the next character by accessing l.input[l.readPosition]
+func (l *Lexer) readChar() {
+	// Check if at the end of the input
+	if l.readPosition >= len(l.input) {
+		l.ch = 0 // sets ch = 0 which is ASCII for 'Nul'
+	} else {
+		// Sets l.ch value == to the NEXT character in the input string
+		l.ch = l.input[l.readPosition]
+	}
+	l.position = l.readPosition
+	l.readPosition += 1
+}
+
+// PeekChar() Similar to readChar except it wont increment l.position and l.readPosition
+// PeekChar() is designed to peek ahead to the next character for certain TWO character tokens like '==' and '!='
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
+}
+
+func (l *Lexer) readIdentifier() string {
+	position := l.position
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
 }
 
 // SUPER SIMPLIFIED
@@ -130,7 +163,18 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
+// Helper function just checks whether the given argument is a letter.
+// Treat '_' as a letter allowing it in identifiers and keywords.
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
 // Helper function just returns whether the passed in byte is a Latin digit between 0 and 9.
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
+}
+
+// Helper function that helps us with initializing these tokens.
+func newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token{Type: tokenType, Literal: string(ch)}
 }
