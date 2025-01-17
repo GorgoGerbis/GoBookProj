@@ -13,14 +13,18 @@ import "monkey/token"
 
 type Lexer struct {
 	input        string
-	position     int  // current position in input (points to current char)
-	readPosition int  // current reading position in input (after current char)
+	position     int  // Tracks the location of the current character (ch) being processed.
+	readPosition int  // Always points to the next character in the input string, allowing the lexer to "peek" ahead to make decisions (e.g., to distinguish between = and ==).
 	ch           byte // current char under examination
 }
 
-func New(input string) *Lexer {
-	l := &Lexer{input: input}
-	l.readChar() // Fully initialize our *Lexer b4 anyone has teh chance to call nextToken()
+// This is a constructor-like function in Go for initializing a new Lexer object.
+// This defines a function named New that:
+// 		Takes a single argument, input, of type string.
+// 		Returns a pointer to a Lexer object (*Lexer).
+func New(source_code_input string) *Lexer {
+	l := &Lexer{input: source_code_input}
+	l.readChar() // Fully initialize our *Lexer b4 anyone has the chance to call nextToken()
 	return l
 }
 
@@ -30,9 +34,11 @@ func New(input string) *Lexer {
 //				1. we either havent read anything yet OR 2. End of the file for us
 // 		else: sets l.ch to the next character by accessing l.input[l.readPosition]
 func (l *Lexer) readChar() {
+	// Check if at the end of the input
 	if l.readPosition >= len(l.input) {
-		l.ch = 0
+		l.ch = 0 // sets ch = 0 which is ASCII for 'Nul'
 	} else {
+		// Sets l.ch value == to the NEXT character in the input string
 		l.ch = l.input[l.readPosition]
 	}
 	l.position = l.readPosition
