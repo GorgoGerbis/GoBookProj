@@ -9,6 +9,8 @@
 // token/token.go // Go back to page 17 and add file names and line numbers
 package token
 
+import "go/token"
+
 var keywords = map[string]TokenType{
 	"fn":     FUNCTION,
 	"let":    LET,
