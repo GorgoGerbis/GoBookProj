@@ -1,6 +1,8 @@
 # Monkey Language Interpreter
 
-A complete interpreter for the Monkey programming language, built from scratch in Go. This project demonstrates lexical analysis, recursive descent parsing, AST construction, and expression evaluation - core concepts in compiler and interpreter design.
+A complete interpreter for the Monkey programming language, built from scratch in Go. This project follows along with **"Writing an Interpreter in Go"** by Thorsten Ball, which teaches the fundamentals of creating an interpreter from the ground up.
+
+**Note**: This project is currently in development as I work through the book's concepts. I plan to extend it with additional features and optimizations once the core foundation is solid.
 
 ## What is Monkey?
 
@@ -41,13 +43,14 @@ The interpreter follows a clean, modular design:
 ## Quick Start
 
 ```bash
-# clone and navigate to project
+# clone the repository
+git clone https://github.com/GorgoGerbis/GoBookProj.git
 cd GoBookProj/src/monkey
 
 # run the REPL
 go run main.go
 
-# run tests
+# run tests  
 go test ./...
 ```
 
@@ -109,4 +112,22 @@ go test ./parser
 - **Clean separation** between lexing, parsing, and evaluation phases
 - **Idiomatic Go** following standard conventions and best practices
 
-This project showcases fundamental computer science concepts while building something genuinely useful - a working programming language interpreter.
+## Learning Journey
+
+This project represents my journey through fundamental computer science concepts:
+- **Lexical Analysis**: Breaking source code into meaningful tokens
+- **Recursive Descent Parsing**: Building syntax trees from token streams  
+- **AST Evaluation**: Interpreting tree structures to execute programs
+- **Language Design**: Understanding how programming languages work under the hood
+
+## Credit
+
+Built while following **"Writing an Interpreter in Go"** by Thorsten Ball - an excellent resource for learning interpreter implementation. The book provides clear explanations of complex concepts and guides you through building a complete interpreter step by step.
+
+## Future Plans
+
+Once I complete the book's core implementation, I plan to extend the interpreter with:
+- Additional data structures (sets, maps with more features)
+- Enhanced error reporting and debugging tools
+- Performance optimizations and benchmarking
+- Potential compilation to bytecode for faster execution
