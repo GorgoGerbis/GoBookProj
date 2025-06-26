@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+# Development notes and planning
+notes/
+
+# Copyright protected materials - never commit
+*.pdf
+writing_an_interpreter_in_go_1.7.pdf
